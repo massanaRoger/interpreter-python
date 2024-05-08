@@ -1,11 +1,12 @@
 import unittest
-from src.lexer import tokenize, Token
+from src.lexer import Lexer, Token
 
 
 class TestLexer(unittest.TestCase):
     def test_numbers(self):
         code = "123 456.789"
-        tokens = list(tokenize(code))
+        lexer = Lexer(code)
+        tokens = lexer.tokenize()
         self.assertEqual(tokens, [
             Token('NUMBER', 123, 1, 0),
             Token('NUMBER', 456.789, 1, 4)
@@ -13,7 +14,8 @@ class TestLexer(unittest.TestCase):
 
     def test_identifiers(self):
         code = "x y z123"
-        tokens = list(tokenize(code))
+        lexer = Lexer(code)
+        tokens = lexer.tokenize()
         self.assertEqual(tokens, [
             Token('ID', 'x', 1, 0),
             Token('ID', 'y', 1, 2),
@@ -22,7 +24,8 @@ class TestLexer(unittest.TestCase):
 
     def test_operators(self):
         code = "+ - * /"
-        tokens = list(tokenize(code))
+        lexer = Lexer(code)
+        tokens = lexer.tokenize()
         self.assertEqual(tokens, [
             Token('OP', '+', 1, 0),
             Token('OP', '-', 1, 2),
@@ -32,7 +35,8 @@ class TestLexer(unittest.TestCase):
 
     def test_strings(self):
         code = '"Hello, world!" "123"'
-        tokens = list(tokenize(code))
+        lexer = Lexer(code)
+        tokens = lexer.tokenize()
         self.assertEqual(tokens, [
             Token('STRING', '"Hello, world!"', 1, 0),
             Token('STRING', '"123"', 1, 16)
@@ -40,7 +44,8 @@ class TestLexer(unittest.TestCase):
 
     def test_comments(self):
         code = "// This is a comment\nx = 10"
-        tokens = list(tokenize(code))
+        lexer = Lexer(code)
+        tokens = lexer.tokenize()
         self.assertEqual(tokens, [
             Token('ID', 'x', 2, 0),
             Token('ASSIGN', '=', 2, 2),
@@ -49,7 +54,8 @@ class TestLexer(unittest.TestCase):
 
     def test_structure(self):
         code = "if (x > 10) { print x; }"
-        tokens = list(tokenize(code))
+        lexer = Lexer(code)
+        tokens = lexer.tokenize()
         self.assertEqual(tokens, [
             Token('IF', 'if', 1, 0),
             Token('LPAREN', '(', 1, 3),
