@@ -1,6 +1,5 @@
 import unittest
 
-from src.ast import IfStatement
 from src.parser import *
 from src.lexer import Lexer
 

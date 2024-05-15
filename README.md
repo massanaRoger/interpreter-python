@@ -1,3 +1,13 @@
+# Custom Language Interpreter
+
+## Project Overview
+
+Welcome to the Custom Language Interpreter project. This project implements a simple, dynamically-typed programming language with support for basic arithmetic operations, variable assignments, control structures, and print statements. The interpreter is implemented in Python and supports both an interactive REPL and script execution.
+
+### Team Members
+- **Roger Massana**
+- **Joel Teodoro**
+
 ## Language Specification
 
 ### 1. **Data Types**
@@ -48,8 +58,6 @@ multiplication_expr ::= primary_expr {('*' | '/') primary_expr}
 
 primary_expr ::= number | identifier | '(' expr ')' | unary_expr
 
-unary_expr  ::= ('+' | '-') primary_expr
-
 identifier  ::= [a-zA-Z_][a-zA-Z0-9_]*
 
 number      ::= [0-9]+ ('.' [0-9]+)?
@@ -77,4 +85,40 @@ if (result > 20) {
 } else {
     print "Result is 20 or less.";
 }
+```
+
+## Solution
+
+The project provides:
+1. A REPL (Read-Eval-Print Loop) for interactive execution of code.
+2. A script executor to run code from files with the `.scl` extension.
+
+## Prerequisites
+
+- Python 3.6 or higher
+
+## Running the REPL
+To start the interactive REPL, run:
+```
+python repl.py
+```
+
+## Running a Script
+To execute a script written in the custom language, use:
+
+```
+python execute.py path/to/your_script.scl
+```
+
+## REPL Usage
+Once you start the REPL, you can enter commands interactively:
+
+
+```
+Welcome to the interactive language REPL. Type 'exit' to quit.
+>>> x = 10;
+>>> y = 20;
+>>> print(x + y);
+30
+>>> if (x < y) { print "x is less than y";
 ```
