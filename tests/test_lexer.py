@@ -70,6 +70,32 @@ class TestLexer(unittest.TestCase):
             Token('RBRACE', '}', 1, 23)
         ])
 
+    def test_logical_operators(self):
+        code = "if (x > 1 && y < 2 || z == 3) { print x; }"
+        lexer = Lexer(code)
+        tokens = lexer.tokenize()
+        self.assertEqual(tokens, [
+            Token('IF', 'if', 1, 0),
+            Token('LPAREN', '(', 1, 3),
+            Token('ID', 'x', 1, 4),
+            Token('COMPARE', '>', 1, 6),
+            Token('NUMBER', 1, 1, 8),
+            Token('LOGICAL', '&&', 1, 10),
+            Token('ID', 'y', 1, 13),
+            Token('COMPARE', '<', 1, 15),
+            Token('NUMBER', 2, 1, 17),
+            Token('LOGICAL', '||', 1, 19),
+            Token('ID', 'z', 1, 22),
+            Token('COMPARE', '==', 1, 24),
+            Token('NUMBER', 3, 1, 27),
+            Token('RPAREN', ')', 1, 28),
+            Token('LBRACE', '{', 1, 30),
+            Token('PRINT', 'print', 1, 32),
+            Token('ID', 'x', 1, 38),
+            Token('END', ';', 1, 39),
+            Token('RBRACE', '}', 1, 41)
+        ])
+
 
 if __name__ == '__main__':
     unittest.main()

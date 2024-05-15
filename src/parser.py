@@ -44,8 +44,16 @@ class Parser:
                 self.eat('RBRACE')
                 return Block(nodes)
             else:
-                nodes.append(self.comparison())
+                nodes.append(self.logical_expression())
         return Block(nodes)
+
+    def logical_expression(self):
+        node = self.comparison()
+        while self.current_token is not None and self.current_token.type == 'LOGICAL':
+            token = self.current_token
+            self.eat('LOGICAL')
+            node = BinaryOperation(left=node, operator=token.value, right=self.comparison())
+        return node
 
     def comparison(self):
         node = self.expression()
@@ -95,7 +103,7 @@ class Parser:
             return Variable(token.value)
         elif token.type == 'LPAREN':
             self.eat('LPAREN')  # Eat the '('
-            node = self.expression()  # Process the subexpression
+            node = self.logical_expression()  # Process the subexpression
             self.eat('RPAREN')  # Eat the ')'
             return node
         elif token.type == 'STRING':
@@ -121,7 +129,7 @@ class Parser:
     def if_statement(self):
         self.eat('IF')
         self.eat('LPAREN')
-        condition = self.comparison()
+        condition = self.logical_expression()
         self.eat('RPAREN')
         true_block = self.parse()
         false_block = None

@@ -345,9 +345,53 @@ class TestParser(unittest.TestCase):
         self.assertIsInstance(assignment_stmt.value.right.right.right, Number)
         self.assertEqual(assignment_stmt.value.right.right.right.value, 4)
 
-    def test_complex_if_statement_with_parentheses(self):
+    def test_logical_expression(self):
+        lexer = Lexer("1 < 2 && 3 > 2 || 4 == 4")
+        tokens = lexer.tokenize()
+        parser = Parser(tokens)
+        ast = parser.parse()
+
+        # Verificar que el AST es un Block
+        self.assertIsInstance(ast, Block)
+        self.assertEqual(len(ast.statements), 1)
+
+        # Extraer la operación lógica principal
+        main_expr = ast.statements[0]
+
+        # Verificar que la operación principal es una disyunción (||)
+        self.assertIsInstance(main_expr, BinaryOperation)
+        self.assertEqual(main_expr.operator, '||')
+
+        # Verificar el lado izquierdo de la disyunción (una conjunción &&)
+        self.assertIsInstance(main_expr.left, BinaryOperation)
+        self.assertEqual(main_expr.left.operator, '&&')
+
+        # Verificar las comparaciones dentro de la conjunción
+        self.assertIsInstance(main_expr.left.left, BinaryOperation)
+        self.assertEqual(main_expr.left.left.operator, '<')
+        self.assertIsInstance(main_expr.left.left.left, Number)
+        self.assertEqual(main_expr.left.left.left.value, 1)
+        self.assertIsInstance(main_expr.left.left.right, Number)
+        self.assertEqual(main_expr.left.left.right.value, 2)
+
+        self.assertIsInstance(main_expr.left.right, BinaryOperation)
+        self.assertEqual(main_expr.left.right.operator, '>')
+        self.assertIsInstance(main_expr.left.right.left, Number)
+        self.assertEqual(main_expr.left.right.left.value, 3)
+        self.assertIsInstance(main_expr.left.right.right, Number)
+        self.assertEqual(main_expr.left.right.right.value, 2)
+
+        # Verificar la comparación en el lado derecho de la disyunción
+        self.assertIsInstance(main_expr.right, BinaryOperation)
+        self.assertEqual(main_expr.right.operator, '==')
+        self.assertIsInstance(main_expr.right.left, Number)
+        self.assertEqual(main_expr.right.left.value, 4)
+        self.assertIsInstance(main_expr.right.right, Number)
+        self.assertEqual(main_expr.right.right.value, 4)
+
+    def test_complex_if_statement_with_logical_operators(self):
         lexer = Lexer("""
-            if (((x + 1) * (y - 2)) > ((z / 3) + (w * 4))) {
+            if ((x > 1 && y < 2) || (z >= 3 && w <= 4)) {
                 result = 1;
             } else {
                 result = 0;
@@ -369,43 +413,35 @@ class TestParser(unittest.TestCase):
 
         # Verificar la condición del if
         self.assertIsInstance(if_stmt.condition, BinaryOperation)
-        self.assertEqual(if_stmt.condition.operator, '>')
+        self.assertEqual(if_stmt.condition.operator, '||')
 
-        # Verificar el lado izquierdo de la condición (una multiplicación dentro de paréntesis)
+        # Verificar el lado izquierdo de la condición (una conjunción &&)
         self.assertIsInstance(if_stmt.condition.left, BinaryOperation)
-        self.assertEqual(if_stmt.condition.left.operator, '*')
-
-        # Verificar la suma dentro de los paréntesis
+        self.assertEqual(if_stmt.condition.left.operator, '&&')
         self.assertIsInstance(if_stmt.condition.left.left, BinaryOperation)
-        self.assertEqual(if_stmt.condition.left.left.operator, '+')
+        self.assertEqual(if_stmt.condition.left.left.operator, '>')
         self.assertIsInstance(if_stmt.condition.left.left.left, Variable)
         self.assertEqual(if_stmt.condition.left.left.left.name, 'x')
         self.assertIsInstance(if_stmt.condition.left.left.right, Number)
         self.assertEqual(if_stmt.condition.left.left.right.value, 1)
-
-        # Verificar la resta dentro de los paréntesis
         self.assertIsInstance(if_stmt.condition.left.right, BinaryOperation)
-        self.assertEqual(if_stmt.condition.left.right.operator, '-')
+        self.assertEqual(if_stmt.condition.left.right.operator, '<')
         self.assertIsInstance(if_stmt.condition.left.right.left, Variable)
         self.assertEqual(if_stmt.condition.left.right.left.name, 'y')
         self.assertIsInstance(if_stmt.condition.left.right.right, Number)
         self.assertEqual(if_stmt.condition.left.right.right.value, 2)
 
-        # Verificar el lado derecho de la condición (una suma dentro de paréntesis)
+        # Verificar el lado derecho de la condición (una conjunción &&)
         self.assertIsInstance(if_stmt.condition.right, BinaryOperation)
-        self.assertEqual(if_stmt.condition.right.operator, '+')
-
-        # Verificar la división dentro de los paréntesis
+        self.assertEqual(if_stmt.condition.right.operator, '&&')
         self.assertIsInstance(if_stmt.condition.right.left, BinaryOperation)
-        self.assertEqual(if_stmt.condition.right.left.operator, '/')
+        self.assertEqual(if_stmt.condition.right.left.operator, '>=')
         self.assertIsInstance(if_stmt.condition.right.left.left, Variable)
         self.assertEqual(if_stmt.condition.right.left.left.name, 'z')
         self.assertIsInstance(if_stmt.condition.right.left.right, Number)
         self.assertEqual(if_stmt.condition.right.left.right.value, 3)
-
-        # Verificar la multiplicación dentro de los paréntesis
         self.assertIsInstance(if_stmt.condition.right.right, BinaryOperation)
-        self.assertEqual(if_stmt.condition.right.right.operator, '*')
+        self.assertEqual(if_stmt.condition.right.right.operator, '<=')
         self.assertIsInstance(if_stmt.condition.right.right.left, Variable)
         self.assertEqual(if_stmt.condition.right.right.left.name, 'w')
         self.assertIsInstance(if_stmt.condition.right.right.right, Number)

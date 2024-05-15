@@ -12,11 +12,12 @@ class Lexer:
         ('PRINT', r'\bprint\b'),  # print keyword
         ('IF', r'\bif\b'),  # if keyword
         ('ELSE', r'\belse\b'),  # else keyword
+        ('COMPARE', r'==|!=|<=|>=|>|<'),  # Comparison operators
         ('ASSIGN', r'='),  # Assignment operator
         ('END', r';'),  # Statement terminator
         ('ID', r'[A-Za-z_][A-Za-z0-9_]*'),  # Identifiers
         ('OP', r'[+\-*/]'),  # Arithmetic operators
-        ('COMPARE', r'==|!=|<=|>=|>|<'),  # Comparison operators
+        ('LOGICAL', r'&&|\|\|'),  # Logical operators
         ('LPAREN', r'\('),  # Left Parenthesis
         ('RPAREN', r'\)'),  # Right Parenthesis
         ('LBRACE', r'\{'),  # Left Curly Brace
