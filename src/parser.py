@@ -75,17 +75,15 @@ class Parser:
 
     def term(self):
         """Parse a term from the list of tokens."""
-        node = self.factor()  # Start with the highest precedence function that handles factors (numbers, variables,
-        # subexpressions)
+        node = self.factor()
         while self.current_token is not None and self.current_token.type == 'OP' and self.current_token.value in (
                 '*', '/'):
             token = self.current_token
             if token.value == '*':
-                self.eat('OP')  # Advance after recognizing an '*'
+                self.eat('OP')
             elif token.value == '/':
-                self.eat('OP')  # Advance after recognizing a '/'
+                self.eat('OP')
 
-            # Create a new node in the AST, using the current node and the next factor
             node = BinaryOperation(left=node, operator=token.value, right=self.factor())
 
         return node
@@ -100,9 +98,9 @@ class Parser:
             self.eat('ID')
             return Variable(token.value)
         elif token.type == 'LPAREN':
-            self.eat('LPAREN')  # Eat the '('
-            node = self.logical_expression()  # Process the subexpression
-            self.eat('RPAREN')  # Eat the ')'
+            self.eat('LPAREN')
+            node = self.logical_expression()
+            self.eat('RPAREN')
             return node
         elif token.type == 'STRING':
             self.eat('STRING')

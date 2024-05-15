@@ -1,6 +1,4 @@
 from src.ast import Block, PrintStatement, AssignmentStatement, IfStatement, BinaryOperation, Number, String, Variable
-from src.lexer import Lexer
-from src.parser import Parser
 
 
 class Interpreter:
@@ -80,28 +78,3 @@ class Interpreter:
             return left or right
         else:
             raise Exception(f"Unknown operator: {bin_op.operator}")
-
-
-# Example usage
-if __name__ == "__main__":
-    # This is a placeholder. You should replace it with the actual parsing process.
-    code = """
-    x = 15;
-    y = 10;
-    result = x + y;
-    print "The result is: ";
-    print result;
-    if (result > 20) {
-        print "Result is greater than 20.";
-    } else {
-        print "Result is 20 or less.";
-    }
-    """
-
-    lexer = Lexer(code)
-    tokens = lexer.tokenize()
-    parser = Parser(tokens)
-    ast = parser.parse()
-
-    interpreter = Interpreter(ast)
-    interpreter.interpret()
