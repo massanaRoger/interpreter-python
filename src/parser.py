@@ -1,4 +1,4 @@
-from ast import *
+from src.ast import Block, BinaryOperation, Number, Variable, PrintStatement, AssignmentStatement
 
 
 class Parser:
@@ -31,20 +31,24 @@ class Parser:
     def program(self):
         nodes = []
         while self.current_token is not None and self.current_token.type != 'EOF':
+            print(f"Current Token Type: {self.current_token.type}")
             if self.current_token.type == 'ID':
                 nodes.append(self.assignment_statement())
             elif self.current_token.type == 'PRINT':
                 nodes.append(self.print_statement())
+            else:
+                nodes.append(self.expression())
         return Block(nodes)
 
     def expression(self):
         node = self.term()
-        while self.current_token is not None and self.current_token.type in ('PLUS', 'MINUS'):
+        while self.current_token is not None and self.current_token.type == 'OP' and self.current_token.value in (
+                '+', '-'):
             token = self.current_token
-            if token.type == 'PLUS':
-                self.eat('PLUS')
-            elif token.type == 'MINUS':
-                self.eat('MINUS')
+            if token.type == '+':
+                self.eat('OP')
+            elif token.type == '-':
+                self.eat('OP')
             node = BinaryOperation(left=node, operator=token.type, right=self.term())
         return node
 
@@ -52,15 +56,16 @@ class Parser:
         """Parse a term from the list of tokens."""
         node = self.factor()  # Start with the highest precedence function that handles factors (numbers, variables,
         # subexpressions)
-        while self.current_token.type in ('MUL', 'DIV'):
+        while self.current_token is not None and self.current_token.type == 'OP' and self.current_token.value in (
+                '*', '/'):
             token = self.current_token
-            if token.type == 'MUL':
-                self.eat('MUL')
-            elif token.type == 'DIV':
-                self.eat('DIV')
+            if token.value == '*':
+                self.eat('OP')  # Advance after recognizing an '*'
+            elif token.value == '/':
+                self.eat('OP')  # Advance after recognizing a '/'
 
             # Create a new node in the AST, using the current node and the next factor
-            node = BinaryOperation(left=node, operator=token.type, right=self.factor())
+            node = BinaryOperation(left=node, operator=token.value, right=self.factor())
 
         return node
 
