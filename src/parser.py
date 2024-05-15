@@ -1,4 +1,4 @@
-from src.ast import Block, BinaryOperation, Number, Variable, PrintStatement, AssignmentStatement, IfStatement
+from src.ast import Block, BinaryOperation, Number, Variable, PrintStatement, AssignmentStatement, IfStatement, String
 
 
 class Parser:
@@ -98,6 +98,9 @@ class Parser:
             node = self.expression()  # Process the subexpression
             self.eat('RPAREN')  # Eat the ')'
             return node
+        elif token.type == 'STRING':
+            self.eat('STRING')
+            return String(token.value.replace('"', ''))
         else:
             raise Exception(f'Unexpected token type: {token.type}')
 

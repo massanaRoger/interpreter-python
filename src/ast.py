@@ -13,6 +13,10 @@ class Number(ASTNode):
     def __init__(self, value):
         self.value = value
 
+class String(ASTNode):
+    def __init__(self, value):
+        self.value = value
+
 
 class Variable(ASTNode):
     def __init__(self, name):
