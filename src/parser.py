@@ -1,4 +1,4 @@
-from src.ast import Block, BinaryOperation, Number, Variable, PrintStatement, AssignmentStatement
+from src.ast import Block, BinaryOperation, Number, Variable, PrintStatement, AssignmentStatement, IfStatement
 
 
 class Parser:
@@ -32,24 +32,39 @@ class Parser:
         nodes = []
         while self.current_token is not None and self.current_token.type != 'EOF':
             print(f"Current Token Type: {self.current_token.type}")
-            if self.current_token.type == 'ID':
+            if self.current_token.type == 'LBRACE':
+                self.eat('LBRACE')
+            elif self.current_token.type == 'ID':
                 nodes.append(self.assignment_statement())
             elif self.current_token.type == 'PRINT':
                 nodes.append(self.print_statement())
+            elif self.current_token.type == 'IF':
+                nodes.append(self.if_statement())
+            elif self.current_token.type == 'RBRACE':
+                self.eat('RBRACE')
+                return Block(nodes)
             else:
-                nodes.append(self.expression())
+                nodes.append(self.comparison())
         return Block(nodes)
+
+    def comparison(self):
+        node = self.expression()
+        while self.current_token is not None and self.current_token.type == 'COMPARE':
+            token = self.current_token
+            self.eat('COMPARE')
+            node = BinaryOperation(left=node, operator=token.value, right=self.expression())
+        return node
 
     def expression(self):
         node = self.term()
         while self.current_token is not None and self.current_token.type == 'OP' and self.current_token.value in (
                 '+', '-'):
             token = self.current_token
-            if token.type == '+':
+            if token.value == '+':
                 self.eat('OP')
-            elif token.type == '-':
+            elif token.value == '-':
                 self.eat('OP')
-            node = BinaryOperation(left=node, operator=token.type, right=self.term())
+            node = BinaryOperation(left=node, operator=token.value, right=self.term())
         return node
 
     def term(self):
@@ -99,3 +114,16 @@ class Parser:
         expr = self.expression()
         self.eat('END')
         return PrintStatement(expr)
+
+    def if_statement(self):
+        self.eat('IF')
+        self.eat('LPAREN')
+        condition = self.comparison()
+        self.eat('RPAREN')
+        true_block = self.parse()
+        false_block = None
+        if self.current_token is not None and self.current_token.type == 'ELSE':
+            self.eat('ELSE')
+            false_block = self.parse()
+
+        return IfStatement(condition, true_block, false_block)
