@@ -1,0 +1,15 @@
+// Initialize variables
+x = 15;
+y = 10;
+
+// Compute sum
+result = x + y;
+print "The result is: ";
+print result;
+
+// Conditional statement
+if (result > 20) {
+    print "Result is greater than 20.";
+} else {
+    print "Result is 20 or less.";
+}
