@@ -22,7 +22,6 @@ class Parser:
         if self.current_token is None:
             raise Exception("Unexpected end of input.")
         if self.current_token.type == token_type:
-            print(f"Eating: {self.current_token.type}, Value: {self.current_token.value}")  # Debug print
             self.next_token()
         else:
             raise Exception(
@@ -31,7 +30,6 @@ class Parser:
     def program(self):
         nodes = []
         while self.current_token is not None and self.current_token.type != 'EOF':
-            print(f"Current Token Type: {self.current_token.type}")
             if self.current_token.type == 'LBRACE':
                 self.eat('LBRACE')
             elif self.current_token.type == 'ID':
@@ -116,13 +114,13 @@ class Parser:
         var_name = self.current_token.value
         self.eat('ID')
         self.eat('ASSIGN')
-        expr = self.expression()
+        expr = self.logical_expression()
         self.eat('END')
         return AssignmentStatement(Variable(var_name), expr)
 
     def print_statement(self):
         self.eat('PRINT')
-        expr = self.expression()
+        expr = self.logical_expression()
         self.eat('END')
         return PrintStatement(expr)
 
