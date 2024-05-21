@@ -2,11 +2,41 @@
 
 ## Project Overview
 
-Welcome to the Custom Language Interpreter project. This project implements a simple, dynamically-typed programming language with support for basic arithmetic operations, variable assignments, control structures, and print statements. The interpreter is implemented in Python and supports both an interactive REPL and script execution.
+Welcome to the Calculator Language Interpreter project. This project implements a simple, dynamically-typed programming language with support for basic arithmetic operations, variable assignments, control structures, and print statements. The interpreter is implemented in Python and supports both an interactive REPL and script execution.
 
 ### Team Members
 - **Roger Massana**
 - **Joel Teodoro**
+
+## Prerequisites
+
+- Python 3.6 or higher
+
+## Running the REPL
+To start the interactive REPL, run:
+```
+python repl.py
+```
+
+## Running a Script
+To execute a script written in the custom language, use:
+
+```
+python execute.py path/to/your_script.scl
+```
+
+## REPL Usage
+Once you start the REPL, you can enter commands interactively:
+
+
+```
+Welcome to the interactive language REPL. Type 'exit' to quit.
+>>> x = 10;
+>>> y = 20;
+>>> print(x + y);
+30
+>>> if (x < y) { print "x is less than y";
+```
 
 ## Language Specification
 
@@ -67,7 +97,6 @@ string      ::= '"' [^"]* '"'
 comment     ::= '//' [^\n]*
 ```
 
-
 ### Example code
 ```
 // Initialize variables
@@ -87,38 +116,57 @@ if (result > 20) {
 }
 ```
 
-## Solution
+## Architecture
 
-The project provides:
-1. A REPL (Read-Eval-Print Loop) for interactive execution of code.
-2. A script executor to run code from files with the `.scl` extension.
+### Abstract Syntax Tree (AST)
+The Abstract Syntax Tree (AST) represents the hierarchical structure of the source code. The following AST node classes are defined:
 
-## Prerequisites
+- **ASTNode**: Base class for all AST nodes.
+- **BinaryOperation**: Represents a binary operation (e.g., addition, subtraction).
+- **Number**: Represents a numerical value.
+- **String**: Represents a string value.
+- **Variable**: Represents a variable.
+- **AssignmentStatement**: Represents a variable assignment statement.
+- **PrintStatement**: Represents a print statement.
+- **IfStatement**: Represents an if statement.
+- **Block**: Represents a block of statements.
 
-- Python 3.6 or higher
+## Lexer
 
-## Running the REPL
-To start the interactive REPL, run:
+The lexer tokenizes the source code into a sequence of tokens. It uses regular expressions to identify different types of tokens, such as numbers, strings, keywords, operators, and identifiers. The lexer processes the source code character by character and matches them against predefined token specifications. It generates tokens for valid sequences and skips over whitespace and comments. Any unrecognized characters result in an error.
+
+### Key Responsibilities:
+- **Tokenization**: Breaking the input source code into meaningful tokens.
+- **Handling Whitespace and Comments**: Ignoring spaces, tabs, and comments to focus on the actual code content.
+- **Error Handling**: Identifying and reporting illegal characters in the source code.
+
+## Parser
+
+The parser converts the sequence of tokens produced by the lexer into an Abstract Syntax Tree (AST). It follows the grammar rules of the language to construct the hierarchical structure of the source code. The parser processes tokens in a recursive descent manner, building the AST node by node.
+
+### Key Responsibilities:
+- **Parsing Expressions**: Handling arithmetic and logical expressions according to operator precedence and associativity.
+- **Constructing AST**: Building a tree structure that represents the code's syntax, including operations, variable assignments, and control structures.
+- **Error Handling**: Detecting and reporting syntax errors, such as unexpected tokens or mismatched parentheses.
+
+## Interpreter
+
+The interpreter traverses the AST and executes the code. It evaluates expressions, performs operations, and manages the program state through a symbol table (environment) that stores variable values. The interpreter supports basic arithmetic, logical operations, variable assignments, and control structures like if statements.
+
+### Key Responsibilities:
+- **Expression Evaluation**: Computing the results of arithmetic and logical expressions.
+- **State Management**: Maintaining the environment to store and update variable values.
+- **Control Flow Execution**: Handling if statements and other control structures to direct the flow of the program.
+- **Error Handling**: Identifying runtime errors, such as undefined variables or division by zero, and reporting them.
+
+### REPL
+
+The REPL (Read-Eval-Print Loop) provides an interactive environment where users can type and execute code line by line. The REPL class handles user input, tokenizes it, parses it, and interprets it in a loop. It uses the same environment for the entire session, allowing variable values to persist across multiple lines of input.
+
+## Testing
+
+Unit tests are provided to ensure the correctness of the lexer, parser, and interpreter. The tests are located in the tests directory. To run the tests, use the following command:
+```sh
+python -m unittest discover tests
 ```
-python repl.py
-```
 
-## Running a Script
-To execute a script written in the custom language, use:
-
-```
-python execute.py path/to/your_script.scl
-```
-
-## REPL Usage
-Once you start the REPL, you can enter commands interactively:
-
-
-```
-Welcome to the interactive language REPL. Type 'exit' to quit.
->>> x = 10;
->>> y = 20;
->>> print(x + y);
-30
->>> if (x < y) { print "x is less than y";
-```
